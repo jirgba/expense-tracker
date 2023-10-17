@@ -6,6 +6,7 @@ import {
   Button,
   FlatList,
   StyleSheet,
+  Pressable,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -19,6 +20,10 @@ const ExpenseTrackerApp = () => {
   useEffect(() => {
     loadExpenses();
   }, []);
+
+  useEffect(() => {
+    saveExpenses();
+  }, [expensesList]);
 
   const loadExpenses = async () => {
     try {
@@ -40,17 +45,40 @@ const ExpenseTrackerApp = () => {
   };
 
   const addExpense = () => {
-    if (expense.trim() === "") {
+    
+    if (details.expense.trim() === "") {
       return;
     }
 
+    // Get the current date and time
+    const currentDate = new Date();
+
+    // Define the format for displaying the date and time
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      timeZoneName: "short",
+    };
+
+    // Format the date and time
+    const formattedDateTime = currentDate.toLocaleString(undefined, options);
+
     const newExpense = {
       id: Math.random().toString(),
-      value: expense,
+      expense: details.expense,
+      amount: details.expense,
+      dateTime: formattedDateTime,
     };
 
     setExpensesList((prevExpensesList) => [...prevExpensesList, newExpense]);
-    setExpense("");
+    setDetails({
+      expense: "",
+      amount: null,
+    });
   };
 
   const deleteExpense = (expenseId) => {
@@ -68,17 +96,26 @@ const ExpenseTrackerApp = () => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          onChangeText={(expense) => setDetails(...details, expense: expense)}
+          onChangeText={(expense) =>
+            setDetails({ ...details, expense: expense })
+          }
           value={details.expense}
           placeholder="Enter an expense"
         />
         <TextInput
           style={styles.input}
-          onChangeText={(amount) => setDetails(...details, amount)}
+          onChangeText={(amount) => setDetails({ ...details, amount: amount })}
           value={details.amount}
           placeholder="Enter an expense"
         />
-        <Button onPress={addExpense} title="Add" />
+        <Pressable
+          style={{ backgroundColor: "blue", padding: 10, borderRadius: 6 }}
+          onPress={() => addExpense()}
+        >
+          <Text style={{ color: "white", fontSize: 15, fontWeight: 500 }}>
+            Add Transaction
+          </Text>
+        </Pressable>
       </View>
 
       <FlatList
@@ -86,12 +123,17 @@ const ExpenseTrackerApp = () => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.expenseItem}>
-            <Text style={styles.expenseText}>{item.value}</Text>
-            <Button
+            <Text style={styles.expenseText}>Expense: {item.expense}</Text>
+            <Text style={styles.expenseText}>Amount: {item.amount}</Text>
+            <Text style={styles.expenseText}>Date & Time: {item.dateTime}</Text>
+            <Pressable
+              style={{ backgroundColor: "red", padding: 10, borderRadius: 6 }}
               onPress={() => deleteExpense(item.id)}
-              title="Delete"
-              color="red"
-            />
+            >
+              <Text style={{ color: "white", fontSize: 15, fontWeight: 500 }}>
+                Delete
+              </Text>
+            </Pressable>
           </View>
         )}
       />
@@ -102,24 +144,21 @@ const ExpenseTrackerApp = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 15,
   },
   inputContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    gap: 20,
     marginBottom: 10,
   },
   input: {
-    width: "80%",
     borderBottomColor: "gray",
     borderBottomWidth: 1,
     padding: 5,
+    fontSize: 15,
+    marginTop: 10,
   },
   expenseItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    gap: 10,
     paddingVertical: 10,
     borderBottomColor: "#ccc",
     borderBottomWidth: 1,
