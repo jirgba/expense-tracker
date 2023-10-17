@@ -70,7 +70,7 @@ const ExpenseTrackerApp = () => {
     const newExpense = {
       id: Math.random().toString(),
       expense: details.expense,
-      amount: details.expense,
+      amount: details.amount,
       dateTime: formattedDateTime,
     };
 
@@ -86,10 +86,6 @@ const ExpenseTrackerApp = () => {
       prevExpensesList.filter((expense) => expense.id !== expenseId)
     );
   };
-
-  useEffect(() => {
-    saveExpenses();
-  }, [expensesList]);
 
   return (
     <View style={styles.container}>
