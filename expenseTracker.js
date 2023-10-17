@@ -45,6 +45,7 @@ const ExpenseTrackerApp = () => {
   };
 
   const addExpense = () => {
+    
     if (details.expense.trim() === "") {
       return;
     }
