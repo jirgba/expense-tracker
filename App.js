@@ -3,6 +3,7 @@ import "react-native-gesture-handler";
 import ExpenseTrackerApp from "./expenseTracker";
 import { NavigationContainer } from "@react-navigation/native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { SafeAreaView } from "react-native";
 export default function App() {
   const Nav = createMaterialTopTabNavigator();
   return (
